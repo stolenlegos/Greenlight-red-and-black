@@ -1,23 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class BulletFly : MonoBehaviour
 {
-    private Rigidbody2D rb;
-    private Vector2 mousePos;
-    private Vector3 originPosition;
-    private Vector2 forceDir;
-
-    private void Awake() {
-        rb = GetComponent<Rigidbody2D>();
-        mousePos = Mouse.current.position.ReadValue().normalized;
-        originPosition = transform.position;
-        forceDir = mousePos - new Vector2 (originPosition.x, originPosition.y);
-    }
+    private Vector2 direction;
+    private Vector2 forceMult;
 
     private void Start() {
-        rb.AddForce(forceDir * 2);
+        GetComponent<Rigidbody2D>().AddForce(direction * forceMult);
+    }
+
+    public void InitializeBullet(Vector2 dir, Vector2 force) {
+        direction = dir;
+        forceMult = force;
     }
 }
