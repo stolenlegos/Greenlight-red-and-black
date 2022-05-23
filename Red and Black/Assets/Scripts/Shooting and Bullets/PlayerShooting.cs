@@ -8,18 +8,10 @@ public class PlayerShooting : MonoBehaviour
     [SerializeField] private GameObject bullet;
     [SerializeField] private Transform origin;
 
-    void Start() {
-        
-    }
-
-    void Update() {
-        
-    }
-
     public void ShootBullet(InputAction.CallbackContext ctx) {
         if (ctx.performed) {
             Debug.Log("Player - Gun Noises");
-            Instantiate(bullet,origin);
+            Instantiate(bullet, origin);
         }
     }
 }
