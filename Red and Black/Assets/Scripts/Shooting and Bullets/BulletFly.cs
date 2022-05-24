@@ -5,14 +5,17 @@ using UnityEngine;
 public class BulletFly : MonoBehaviour
 {
     private Vector2 direction;
-    private Vector2 forceMult;
+    private float forceMult;
 
-    private void Start() {
-        GetComponent<Rigidbody2D>().AddForce(direction * forceMult);
-    }
-
-    public void InitializeBullet(Vector2 dir, Vector2 force) {
+    public void InitializeBullet(Vector2 dir, float force) {
         direction = dir;
         forceMult = force;
+        GetComponent<Rigidbody2D>().AddForce(direction * forceMult);
+        StartCoroutine("TimeOut");
+    }
+
+    private IEnumerator TimeOut() {
+        yield return new WaitForSeconds(1);
+        GameObject.Destroy(gameObject);        
     }
 }
