@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class BulletFly : MonoBehaviour {
     public void InitializeBullet(float force, float stray, bool standingStill) {
+        transform.parent = null;
         float forceMult = force;
 
         if (!standingStill) {
