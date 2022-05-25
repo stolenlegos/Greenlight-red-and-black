@@ -29,8 +29,26 @@
                     "id": "eab2d69d-1dde-4d4d-8450-4ffb113cb50c",
                     "expectedControlType": "Vector2",
                     "processors": "",
+                    "interactions": "Press(behavior=1)",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "SlideOn",
+                    "type": "Value",
+                    "id": "b0b41c7c-d651-45af-a34c-ae79613ca11f",
+                    "expectedControlType": "Button",
+                    "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "SlideOff",
+                    "type": "Button",
+                    "id": "0ef6b00d-101f-41da-bc59-e8afa8fe8cfa",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Vault",
@@ -47,7 +65,7 @@
                     "id": "7cd4d9ad-debf-4698-adff-53bf5d10483a",
                     "expectedControlType": "Vector2",
                     "processors": "",
-                    "interactions": "",
+                    "interactions": "Press",
                     "initialStateCheck": true
                 },
                 {
@@ -56,7 +74,7 @@
                     "id": "380d34d3-ddfe-4829-b327-c7cb21abec8d",
                     "expectedControlType": "Vector2",
                     "processors": "",
-                    "interactions": "",
+                    "interactions": "Press",
                     "initialStateCheck": true
                 },
                 {
@@ -138,80 +156,36 @@
                 },
                 {
                     "name": "One Modifier",
-                    "id": "03c2e7de-0b2f-46a2-a047-0da26a5c8f39",
+                    "id": "eb1722e9-c32a-4870-ae5e-6be4ab290713",
                     "path": "OneModifier",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Slide",
+                    "action": "Vault",
                     "isComposite": true,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "modifier",
-                    "id": "a90ba5ba-539b-4a05-a43a-1bc989344ca2",
-                    "path": "<Keyboard>/shift",
+                    "id": "79a9e227-132a-44a8-99b4-f4bd854eb66a",
+                    "path": "<Keyboard>/w",
                     "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Slide",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "binding",
-                    "id": "26cbb57f-9877-4432-bf47-d32ecedb0bc5",
-                    "path": "<Keyboard>/d",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Slide",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "One Modifier",
-                    "id": "5de0ed04-216e-4052-b6a4-3e3d57954330",
-                    "path": "OneModifier",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Slide",
-                    "isComposite": true,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "modifier",
-                    "id": "c487b215-885b-478d-ba3a-bf1895b26025",
-                    "path": "<Keyboard>/shift",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Slide",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "binding",
-                    "id": "1cb78d83-6ba3-4df1-a4f7-664423908186",
-                    "path": "<Keyboard>/a",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Slide",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "",
-                    "id": "3cff25ba-9673-48f1-876a-348ada5bacef",
-                    "path": "<Keyboard>/space",
-                    "interactions": "Hold",
                     "processors": "",
                     "groups": "",
                     "action": "Vault",
                     "isComposite": false,
-                    "isPartOfComposite": false
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "0473ea85-e8dd-4ada-aa73-e99868407f0f",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Vault",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 },
                 {
                     "name": "",
@@ -320,6 +294,83 @@
                     "processors": "",
                     "groups": "",
                     "action": "Reload",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7fc87b7a-b411-4859-9d9c-16969f4568d8",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SlideOn",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "2D Vector",
+                    "id": "901cba6b-27be-4c99-ab9a-3bd565b3fd7e",
+                    "path": "2DVector",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Slide",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "up",
+                    "id": "462a1de4-d742-49a9-912e-a47ac3b7e793",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Slide",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "598ac231-f8ef-4fa1-95c3-6d9cf0c8b552",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Slide",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "left",
+                    "id": "316057c6-9700-403d-b52d-4914958b1bac",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Slide",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "6a309f60-2714-41c7-965c-d403d5154d5d",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Slide",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "98eb467b-7fd8-448a-91c1-fb3175af3f9a",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "Press(behavior=1)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SlideOff",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
