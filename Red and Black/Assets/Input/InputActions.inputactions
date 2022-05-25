@@ -34,17 +34,35 @@
                 },
                 {
                     "name": "SlideOn",
-                    "type": "Value",
+                    "type": "Button",
                     "id": "b0b41c7c-d651-45af-a34c-ae79613ca11f",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true
+                    "initialStateCheck": false
                 },
                 {
                     "name": "SlideOff",
                     "type": "Button",
                     "id": "0ef6b00d-101f-41da-bc59-e8afa8fe8cfa",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "DiveOn",
+                    "type": "Button",
+                    "id": "6a914608-1638-497c-8c7c-b1eb66e42e58",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "DiveOff",
+                    "type": "Button",
+                    "id": "feb55f68-2b95-4078-9eb9-b220e22500ae",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -274,6 +292,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "SlideOff",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e78292fc-00d8-4c51-bcb7-0fee2950bae4",
+                    "path": "<Keyboard>/ctrl",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DiveOn",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "10cd0aa9-e45d-4586-a278-16494c3c7d8c",
+                    "path": "<Keyboard>/ctrl",
+                    "interactions": "Press(behavior=1)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DiveOff",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

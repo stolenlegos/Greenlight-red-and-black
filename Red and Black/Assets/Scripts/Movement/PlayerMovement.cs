@@ -18,7 +18,7 @@ public class PlayerMovement : MonoBehaviour
 {
     //player components
     [SerializeField] private Rigidbody2D playerRB;
-    [SerializeField] private PolygonCollider2D playerCollider;
+    [SerializeField] private BoxCollider2D playerCollider;
     //playerstates
     [SerializeField] private CharacterState playerState = CharacterState.IDLE;
     //masks
@@ -79,17 +79,22 @@ public class PlayerMovement : MonoBehaviour
                 diveSpeed = 8f;
                 playerStateChanged = false;
                 playerRB.velocity = new Vector2(moveDirection.x * moveSpeed, moveDirection.y);
-                if (runCheck && slideCheck && jumpCheck){
+                if (runCheck && diveCheck && !slideCheck && !jumpCheck){
+                    playerCollider.offset = new Vector2(playerCollider.offset.x, 0.35f);
+                    playerCollider.size = new Vector2(playerCollider.size.x, .3f);
+                    playerRB.velocity = transform.up * diveHeight;
                     playerStateChanged = true;
                     playerState = CharacterState.DIVING;
                     StateObserver.StateChanged("DIVING");
                 }
-                else if (runCheck && jumpCheck && !slideCheck){
+                else if (runCheck && jumpCheck && !slideCheck && !diveCheck){
                     playerStateChanged = true;
                     playerState = CharacterState.JUMPING;
                     StateObserver.StateChanged("JUMPING");
                 }
-                else if (slideCheck && runCheck && !jumpCheck){
+                else if (slideCheck && runCheck && !jumpCheck && !diveCheck){
+                    playerCollider.offset = new Vector2(playerCollider.offset.x, -0.35f);
+                    playerCollider.size = new Vector2(playerCollider.size.x, .3f);
                     playerStateChanged = true;
                     playerState = CharacterState.SLIDING;
                     StateObserver.StateChanged("SLIDING");
@@ -128,11 +133,15 @@ public class PlayerMovement : MonoBehaviour
                 slideSpeed = slideSpeed * .95f;
                 playerRB.velocity = new Vector2(moveDirection.x * (slideSpeed), moveDirection.y);
                 if (!slideCheck && !runCheck){
+                    playerCollider.offset = new Vector2(playerCollider.offset.x, 0f);
+                    playerCollider.size = new Vector2(playerCollider.size.x, 1f);
                     playerStateChanged = true;
                     playerState = CharacterState.IDLE;
                     StateObserver.StateChanged("IDLE");
                 }
                 else if (!slideCheck && runCheck){
+                    playerCollider.offset = new Vector2(playerCollider.offset.x, 0f);
+                    playerCollider.size = new Vector2(playerCollider.size.x, 1f);
                     playerStateChanged = true;
                     playerState = CharacterState.RUNNING;
                     StateObserver.StateChanged("RUNNING");
@@ -142,9 +151,10 @@ public class PlayerMovement : MonoBehaviour
                 slideSpeed = 15f;
                 playerStateChanged = false;
                 playerRB.velocity = new Vector2(moveDirection.x * (diveSpeed), playerRB.velocity.y);
+                IsGrounded();
             }
             //Debug.Log("onground" + IsGrounded());
-            Debug.Log("onwall" + WallCheck());
+            //Debug.Log("onwall" + WallCheck());
             WallCheck();
         }
     }
@@ -172,13 +182,6 @@ public class PlayerMovement : MonoBehaviour
             playerState = CharacterState.JUMPING;
             StateObserver.StateChanged("JUMPING");
         }
-        else if (ctx.started && (playerState == CharacterState.SLIDING))
-        {
-            playerRB.velocity = transform.up * diveHeight;
-            playerStateChanged = true;
-            playerState = CharacterState.DIVING;
-            StateObserver.StateChanged("DIVING");
-        }
     }
     public void VaultAction(InputAction.CallbackContext ctx){
         if (ctx.started && (playerState == CharacterState.IDLE || playerState == CharacterState.RUNNING)){
@@ -188,13 +191,25 @@ public class PlayerMovement : MonoBehaviour
     public void SlideOn(InputAction.CallbackContext ctx){
         if (ctx.performed){
             slideCheck = true;
-            Debug.Log(slideCheck);
+            //Debug.Log(slideCheck);
         }
     }
     public void SlideOff(InputAction.CallbackContext ctx){
         if (ctx.performed){
             slideCheck = false;
-            Debug.Log(slideCheck);
+            //Debug.Log(slideCheck);
+        }
+    }
+    public void DiveOn(InputAction.CallbackContext ctx){
+        if (ctx.performed){
+            diveCheck = true;
+            Debug.Log(diveCheck);
+        }
+    }
+    public void DiveOff(InputAction.CallbackContext ctx){
+        if (ctx.performed){
+            diveCheck = false;
+            Debug.Log(diveCheck);
         }
     }
     private void OnCollisionEnter2D(Collision2D collision){
@@ -217,8 +232,11 @@ public class PlayerMovement : MonoBehaviour
             }
             else if (IsGrounded() && playerState == CharacterState.DIVING)
             {
+                diveCheck = false;
                 if (runCheck)
                 {
+                    playerCollider.offset = new Vector2(playerCollider.offset.x, 0f);
+                    playerCollider.size = new Vector2(playerCollider.size.x, 1f);
                     playerStateChanged = true;
                     playerState = CharacterState.RUNNING;
                     StateObserver.StateChanged("RUNNING");
@@ -226,6 +244,8 @@ public class PlayerMovement : MonoBehaviour
                 }
                 else if (!runCheck)
                 {
+                    playerCollider.offset = new Vector2(playerCollider.offset.x, 0f);
+                    playerCollider.size = new Vector2(playerCollider.size.x, 1f);
                     playerStateChanged = true;
                     playerState = CharacterState.IDLE;
                     StateObserver.StateChanged("IDLE");
