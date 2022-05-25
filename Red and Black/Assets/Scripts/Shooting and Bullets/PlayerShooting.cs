@@ -50,7 +50,7 @@ public class PlayerShooting : MonoBehaviour
     }
 
     private void StateListener(string state) {
-        if (state != "Idle") {
+        if (state != "IDLE") {
             standingStill = false;
         } else {
             standingStill = true;
