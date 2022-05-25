@@ -42,6 +42,7 @@ public class PlayerMovement : MonoBehaviour
     private bool diveCheck = false;
     private bool jumpCheck = false;
     private bool vaultCheck = false;
+    private bool fallCheck = false;
     void Update()
     {
         Debug.Log(playerState);
@@ -70,6 +71,7 @@ public class PlayerMovement : MonoBehaviour
                 if (jumpCheck){
                     playerStateChanged = true;
                     playerState = CharacterState.JUMPING;
+                    StateObserver.StateChanged("JUMPING");
                 }
             }
             if (playerState == CharacterState.RUNNING){
@@ -80,30 +82,38 @@ public class PlayerMovement : MonoBehaviour
                 if (runCheck && slideCheck && jumpCheck){
                     playerStateChanged = true;
                     playerState = CharacterState.DIVING;
+                    StateObserver.StateChanged("DIVING");
                 }
                 else if (runCheck && jumpCheck && !slideCheck){
                     playerStateChanged = true;
                     playerState = CharacterState.JUMPING;
+                    StateObserver.StateChanged("JUMPING");
                 }
                 else if (slideCheck && runCheck && !jumpCheck){
                     playerStateChanged = true;
                     playerState = CharacterState.SLIDING;
+                    StateObserver.StateChanged("SLIDING");
                 }
                 else if (!runCheck){
                     playerStateChanged = true;
                     playerState = CharacterState.IDLE;
+                    StateObserver.StateChanged("IDLE");
                 }
             }
             if (playerState == CharacterState.JUMPING){
                 slideSpeed = 15f;
                 diveSpeed = 8f;
                 playerStateChanged = false;
-                if (runCheck){
+                if (runCheck && !fallCheck){
                     playerRB.velocity = new Vector2(moveDirection.x * moveSpeed, playerRB.velocity.y);
                 }
                 else if (!runCheck)
                 {
                     playerRB.velocity = new Vector2(moveDirection.x, playerRB.velocity.y);
+                }
+                else if (fallCheck)
+                {
+                    playerRB.velocity = new Vector2(moveDirection.x, moveDirection.y * -1.5f);
                 }
             }
             if (playerState == CharacterState.VAULTING){
@@ -120,10 +130,12 @@ public class PlayerMovement : MonoBehaviour
                 if (!slideCheck && !runCheck){
                     playerStateChanged = true;
                     playerState = CharacterState.IDLE;
+                    StateObserver.StateChanged("IDLE");
                 }
                 else if (!slideCheck && runCheck){
                     playerStateChanged = true;
                     playerState = CharacterState.RUNNING;
+                    StateObserver.StateChanged("RUNNING");
                 }
             }
             if (playerState == CharacterState.DIVING){
@@ -131,7 +143,8 @@ public class PlayerMovement : MonoBehaviour
                 playerStateChanged = false;
                 playerRB.velocity = new Vector2(moveDirection.x * (diveSpeed), playerRB.velocity.y);
             }
-            Debug.Log("onground" + IsGrounded());
+            //Debug.Log("onground" + IsGrounded());
+            Debug.Log("onwall" + WallCheck());
             WallCheck();
         }
     }
@@ -141,6 +154,7 @@ public class PlayerMovement : MonoBehaviour
             playerStateChanged = true;
             runCheck = true;
             playerState = CharacterState.RUNNING;
+            StateObserver.StateChanged("RUNNING");
         }
         else if (ctx.started && playerState == CharacterState.JUMPING){
             runCheck = true;
@@ -156,13 +170,14 @@ public class PlayerMovement : MonoBehaviour
             playerRB.velocity = transform.up * jumpHeight;
             playerStateChanged = true;
             playerState = CharacterState.JUMPING;
-            Debug.Log("Player - Jumping");
+            StateObserver.StateChanged("JUMPING");
         }
         else if (ctx.started && (playerState == CharacterState.SLIDING))
         {
             playerRB.velocity = transform.up * diveHeight;
             playerStateChanged = true;
             playerState = CharacterState.DIVING;
+            StateObserver.StateChanged("DIVING");
         }
     }
     public void VaultAction(InputAction.CallbackContext ctx){
@@ -184,7 +199,7 @@ public class PlayerMovement : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D collision){
         if (collision != null){
-            Debug.Log("Collided");
+            //Debug.Log("Collided");
             if (!IsGrounded()){
 
             }
@@ -192,10 +207,12 @@ public class PlayerMovement : MonoBehaviour
                 if (runCheck){
                     playerStateChanged = true;
                     playerState = CharacterState.RUNNING;
+                    StateObserver.StateChanged("RUNNING");
                 }
                 else if (!runCheck){
                     playerStateChanged = true;
                     playerState = CharacterState.IDLE;
+                    StateObserver.StateChanged("IDLE");
                 }
             }
             else if (IsGrounded() && playerState == CharacterState.DIVING)
@@ -204,13 +221,46 @@ public class PlayerMovement : MonoBehaviour
                 {
                     playerStateChanged = true;
                     playerState = CharacterState.RUNNING;
+                    StateObserver.StateChanged("RUNNING");
                     slideCheck = false;
                 }
                 else if (!runCheck)
                 {
                     playerStateChanged = true;
                     playerState = CharacterState.IDLE;
+                    StateObserver.StateChanged("IDLE");
                     slideCheck = false;
+                }
+            }
+            /*else if (WallCheck() && !IsGrounded() && playerState == CharacterState.JUMPING)
+            {
+
+            }*/
+        }
+    }
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if(collision != null)
+        {
+            Debug.Log("CollidedStay");
+            if (WallCheck() && !IsGrounded() && (playerState == CharacterState.JUMPING || playerState == CharacterState.DIVING))
+            {
+                fallCheck = true;
+            }
+            if(fallCheck && IsGrounded() && (playerState == CharacterState.JUMPING || playerState == CharacterState.DIVING))
+            {
+                fallCheck = false;
+                if (runCheck)
+                {
+                    playerStateChanged = true;
+                    playerState = CharacterState.RUNNING;
+                    StateObserver.StateChanged("RUNNING");
+                }
+                else if (!runCheck)
+                {
+                    playerStateChanged = true;
+                    playerState = CharacterState.IDLE;
+                    StateObserver.StateChanged("IDLE");
                 }
             }
         }
@@ -233,13 +283,11 @@ public class PlayerMovement : MonoBehaviour
             rayColor = Color.red;
         }
         Debug.DrawRay(playerCollider.bounds.center, Vector2.down * (playerCollider.bounds.extents.y + extraHeightText));
-        //Debug.Log(raycastHit.collider);
         if (raycastHit.collider != null){
             //groundedForDialogue = true;
             return true;
         }
         else { return false; }
-        //return raycastHit.collider != null;
     }
     private bool WallCheck(){
         float extraHeightText = .02f;
