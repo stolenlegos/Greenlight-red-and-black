@@ -28,7 +28,9 @@ public class PlayerMovement : MonoBehaviour
     private float slideSpeed = 15f;
     private float diveSpeed = 8f;
     private float diveHeight = 3.5f;
-    private float jumpHeight = 5f;
+    private float jumpHeight = 10f;
+    private float fallSpeed = -3f;
+    private float wallSlideSpeed = -2f;
     //movement directions
     Vector2 moveDirection = Vector2.zero;
     Vector2 jumpDirections = Vector2.zero;
@@ -43,6 +45,8 @@ public class PlayerMovement : MonoBehaviour
     private bool jumpCheck = false;
     private bool vaultCheck = false;
     private bool fallCheck = false;
+    private bool falling = false;
+    private bool reGround = false;
     void Update()
     {
         Debug.Log(playerState);
@@ -79,7 +83,11 @@ public class PlayerMovement : MonoBehaviour
                 diveSpeed = 8f;
                 playerStateChanged = false;
                 playerRB.velocity = new Vector2(moveDirection.x * moveSpeed, moveDirection.y);
-                if (runCheck && diveCheck && !slideCheck && !jumpCheck){
+                if (!IsGrounded() && !jumpCheck && !diveCheck && !slideCheck)
+                {
+                    playerRB.velocity = new Vector2(moveDirection.x * (moveSpeed), fallSpeed);
+                }
+                else if (runCheck && diveCheck && !slideCheck && !jumpCheck){
                     playerCollider.offset = new Vector2(playerCollider.offset.x, 0.35f);
                     playerCollider.size = new Vector2(playerCollider.size.x, .3f);
                     playerRB.velocity = transform.up * diveHeight;
@@ -109,6 +117,8 @@ public class PlayerMovement : MonoBehaviour
                 slideSpeed = 15f;
                 diveSpeed = 8f;
                 playerStateChanged = false;
+                Debug.Log("falling" + falling);
+                Debug.Log("fallcheck" + fallCheck);
                 if (runCheck && !fallCheck){
                     playerRB.velocity = new Vector2(moveDirection.x * moveSpeed, playerRB.velocity.y);
                 }
@@ -118,7 +128,12 @@ public class PlayerMovement : MonoBehaviour
                 }
                 else if (fallCheck)
                 {
-                    playerRB.velocity = new Vector2(moveDirection.x, moveDirection.y * -1.5f);
+                    falling = true;
+                    playerRB.velocity = new Vector2(moveDirection.x, wallSlideSpeed);
+                }
+                else if (falling && !fallCheck)
+                {
+                    playerRB.velocity = new Vector2(moveDirection.x, fallSpeed); //fallSpeed);
                 }
             }
             if (playerState == CharacterState.VAULTING){
@@ -132,7 +147,17 @@ public class PlayerMovement : MonoBehaviour
                 playerStateChanged = false;
                 slideSpeed = slideSpeed * .95f;
                 playerRB.velocity = new Vector2(moveDirection.x * (slideSpeed), moveDirection.y);
-                if (!slideCheck && !runCheck){
+                if(!IsGrounded() && slideCheck && runCheck)
+                {
+                    reGround = true;
+                    playerRB.velocity = new Vector2(moveDirection.x * (slideSpeed), fallSpeed);
+                }
+                else if (IsGrounded() && reGround)
+                {
+                    slideCheck = false;
+                    reGround = false;
+                }
+                else if (!slideCheck && !runCheck){
                     playerCollider.offset = new Vector2(playerCollider.offset.x, 0f);
                     playerCollider.size = new Vector2(playerCollider.size.x, 1f);
                     playerStateChanged = true;
@@ -156,6 +181,7 @@ public class PlayerMovement : MonoBehaviour
             //Debug.Log("onground" + IsGrounded());
             //Debug.Log("onwall" + WallCheck());
             WallCheck();
+            //Debug.Log("jumpCheck" + jumpCheck);
         }
     }
     public void MoveAction(InputAction.CallbackContext ctx){
@@ -219,6 +245,11 @@ public class PlayerMovement : MonoBehaviour
 
             }
             else if (IsGrounded() && playerState == CharacterState.JUMPING){
+                if(falling || fallCheck)
+                {
+                    fallCheck = false;
+                    falling = false;
+                }
                 if (runCheck){
                     playerStateChanged = true;
                     playerState = CharacterState.RUNNING;
