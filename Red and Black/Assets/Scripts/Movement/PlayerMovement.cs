@@ -49,7 +49,7 @@ public class PlayerMovement : MonoBehaviour
     private bool reGround = false;
     void Update()
     {
-        Debug.Log(playerState);
+        //Debug.Log(playerState);
         if (!inputsDisabled)
         {
             
@@ -81,6 +81,7 @@ public class PlayerMovement : MonoBehaviour
             if (playerState == CharacterState.RUNNING){
                 slideSpeed = 15f;
                 diveSpeed = 8f;
+                falling = false;
                 playerStateChanged = false;
                 playerRB.velocity = new Vector2(moveDirection.x * moveSpeed, moveDirection.y);
                 if (!IsGrounded() && !jumpCheck && !diveCheck && !slideCheck)
@@ -118,22 +119,26 @@ public class PlayerMovement : MonoBehaviour
                 diveSpeed = 8f;
                 playerStateChanged = false;
                 Debug.Log("falling" + falling);
-                Debug.Log("fallcheck" + fallCheck);
+                //Debug.Log("fallcheck" + fallCheck);
                 if (runCheck && !fallCheck){
                     playerRB.velocity = new Vector2(moveDirection.x * moveSpeed, playerRB.velocity.y);
+                    Debug.Log("Running1");
                 }
                 else if (!runCheck)
                 {
                     playerRB.velocity = new Vector2(moveDirection.x, playerRB.velocity.y);
+                    Debug.Log("Running2");
                 }
-                else if (fallCheck)
+                else if (fallCheck && !falling)
                 {
                     falling = true;
                     playerRB.velocity = new Vector2(moveDirection.x, wallSlideSpeed);
+                    Debug.Log("Running3");
                 }
-                else if (falling && !fallCheck)
+                else if (falling && fallCheck)
                 {
-                    playerRB.velocity = new Vector2(moveDirection.x, fallSpeed); //fallSpeed);
+                    playerRB.velocity = new Vector2(moveDirection.x * moveSpeed, playerRB.velocity.y); //fallSpeed);
+                    Debug.Log("Running4");
                 }
             }
             if (playerState == CharacterState.VAULTING){
@@ -229,13 +234,13 @@ public class PlayerMovement : MonoBehaviour
     public void DiveOn(InputAction.CallbackContext ctx){
         if (ctx.performed){
             diveCheck = true;
-            Debug.Log(diveCheck);
+            //Debug.Log(diveCheck);
         }
     }
     public void DiveOff(InputAction.CallbackContext ctx){
         if (ctx.performed){
             diveCheck = false;
-            Debug.Log(diveCheck);
+            //Debug.Log(diveCheck);
         }
     }
     private void OnCollisionEnter2D(Collision2D collision){
