@@ -49,7 +49,7 @@ public class PlayerMovement : MonoBehaviour
     private bool reGround = false;
     void Update()
     {
-        //Debug.Log(playerState);
+        Debug.Log(playerState);
         if (!inputsDisabled)
         {
             
