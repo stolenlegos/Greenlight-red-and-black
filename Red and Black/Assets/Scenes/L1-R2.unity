@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.16388476, g: 0.19167483, b: 0.2166084, a: 1}
+  m_IndirectSpecularColor: {r: 0.16388458, g: 0.19167335, b: 0.2166083, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -773,11 +773,11 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 4.18946, y: 3.3445866}
-      - {x: -0.13412786, y: 0.09350164}
-      - {x: -0.13163865, y: -0.099283054}
+    - - {x: 4.448825, y: 3.3445866}
+      - {x: -0.11824727, y: -0.09705345}
+      - {x: 0.43473327, y: -0.09398992}
       - {x: 4.2911735, y: 2.803434}
-      - {x: 4.450122, y: 3.342951}
+      - {x: 4.4342413, y: 3.0200663}
 --- !u!1 &1386328516
 GameObject:
   m_ObjectHideFlags: 0
@@ -1380,12 +1380,13 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -4.1726403, y: 3.3444102}
-      - {x: -4.4722137, y: 3.34438}
+    - - {x: -4.4557824, y: 3.3341143}
+      - {x: -4.4155884, y: 2.8707619}
+      - {x: -4.0500793, y: 2.690581}
       - {x: -3.4956117, y: 2.4366655}
       - {x: -0.6470175, y: 0.3147254}
-      - {x: 0.13191473, y: -0.10666528}
-      - {x: 0.13607931, y: 0.098578185}
+      - {x: -0.25419366, y: -0.029444963}
+      - {x: 0.1515212, y: -0.097046524}
 --- !u!61 &1920189524
 BoxCollider2D:
   m_ObjectHideFlags: 0

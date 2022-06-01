@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.16388476, g: 0.19167483, b: 0.2166084, a: 1}
+  m_IndirectSpecularColor: {r: 0.16388458, g: 0.19167335, b: 0.2166083, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -148,11 +148,11 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -0.12630177, y: 0.1292665}
-      - {x: -0.1259911, y: -0.08899617}
+    - - {x: -0.14840794, y: -0.113904595}
+      - {x: 0.4266708, y: -0.16636872}
       - {x: 2.5726767, y: 1.7029228}
-      - {x: 4.4657073, y: 3.3478043}
-      - {x: 4.203761, y: 3.3543577}
+      - {x: 4.7530913, y: 2.557498}
+      - {x: 4.435878, y: 3.3377779}
 --- !u!1 &43329450
 GameObject:
   m_ObjectHideFlags: 0
