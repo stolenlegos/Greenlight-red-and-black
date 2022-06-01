@@ -18,7 +18,7 @@ public class PlayerMovement : MonoBehaviour
 {
     //player components
     [SerializeField] private Rigidbody2D playerRB;
-    [SerializeField] private BoxCollider2D playerCollider;
+    [SerializeField] private CapsuleCollider2D playerCollider;
     //playerstates
     [SerializeField] private CharacterState playerState = CharacterState.IDLE;
     //masks
@@ -89,8 +89,8 @@ public class PlayerMovement : MonoBehaviour
                     playerRB.velocity = new Vector2(moveDirection.x * (moveSpeed), fallSpeed);
                 }
                 else if (runCheck && diveCheck && !slideCheck && !jumpCheck){
-                    playerCollider.offset = new Vector2(playerCollider.offset.x, 0.35f);
-                    playerCollider.size = new Vector2(playerCollider.size.x, .3f);
+                    playerCollider.offset = new Vector2(playerCollider.offset.x, 0.25f);
+                    playerCollider.size = new Vector2(playerCollider.size.x, .5f);
                     playerRB.velocity = transform.up * diveHeight;
                     playerStateChanged = true;
                     playerState = CharacterState.DIVING;
@@ -102,8 +102,8 @@ public class PlayerMovement : MonoBehaviour
                     StateObserver.StateChanged("JUMPING");
                 }
                 else if (slideCheck && runCheck && !jumpCheck && !diveCheck){
-                    playerCollider.offset = new Vector2(playerCollider.offset.x, -0.35f);
-                    playerCollider.size = new Vector2(playerCollider.size.x, .3f);
+                    playerCollider.offset = new Vector2(playerCollider.offset.x, -0.25f);
+                    playerCollider.size = new Vector2(playerCollider.size.x, .5f);
                     playerStateChanged = true;
                     playerState = CharacterState.SLIDING;
                     StateObserver.StateChanged("SLIDING");
@@ -330,20 +330,45 @@ public class PlayerMovement : MonoBehaviour
     }
     private bool IsGrounded(){
         float extraHeightText = .02f;
-        RaycastHit2D raycastHit = Physics2D.Raycast(playerCollider.bounds.center, Vector2.down, playerCollider.bounds.extents.y + extraHeightText, ~playerLayerMask);
-        Color rayColor;
-        if (raycastHit.collider != null){
-            rayColor = Color.green;
+        if (playerState == CharacterState.DIVING)
+        {
+            RaycastHit2D divecastHit1 = Physics2D.Raycast(playerCollider.bounds.center, Vector2.down, playerCollider.bounds.extents.y + extraHeightText, ~playerLayerMask);
+            RaycastHit2D divecastHit2 = Physics2D.Raycast(playerCollider.bounds.center, Vector2.down, playerCollider.bounds.extents.y + extraHeightText, ~playerLayerMask);
+            RaycastHit2D divecastHit3 = Physics2D.Raycast(playerCollider.bounds.center, Vector2.down, playerCollider.bounds.extents.y + extraHeightText, ~playerLayerMask);
+            Color rayColor;
+            if (divecastHit1.collider != null || divecastHit2.collider != null || divecastHit3.collider != null)
+            {
+                rayColor = Color.green;
+            }
+            else
+            {
+                rayColor = Color.red;
+            }
+            Debug.DrawRay(playerCollider.bounds.center, Vector2.down * (playerCollider.bounds.extents.y + extraHeightText));
+            if (divecastHit1.collider != null || divecastHit2.collider != null || divecastHit3.collider != null)
+            {
+                //groundedForDialogue = true;
+                return true;
+            }
+            else { return false; }
         }
-        else{
-            rayColor = Color.red;
+        else {
+            RaycastHit2D raycastHit = Physics2D.Raycast(playerCollider.bounds.center, Vector2.down, playerCollider.bounds.extents.y + extraHeightText, ~playerLayerMask);
+            Color rayColor;
+            if (raycastHit.collider != null) {
+                rayColor = Color.green;
+            }
+            else {
+                rayColor = Color.red;
+            }
+            Debug.DrawRay(playerCollider.bounds.center, Vector2.down * (playerCollider.bounds.extents.y + extraHeightText));
+            if (raycastHit.collider != null) {
+                //groundedForDialogue = true;
+                return true;
+            }
+            else { return false; }
         }
-        Debug.DrawRay(playerCollider.bounds.center, Vector2.down * (playerCollider.bounds.extents.y + extraHeightText));
-        if (raycastHit.collider != null){
-            //groundedForDialogue = true;
-            return true;
-        }
-        else { return false; }
+
     }
     private bool WallCheck(){
         float extraHeightText = .02f;
@@ -365,6 +390,19 @@ public class PlayerMovement : MonoBehaviour
         }
         else { return false; }
         
+    }
+
+    private void SlopeCheck()
+    {
+
+    }
+    private void HorizontalSlopeCheck()
+    {
+
+    }
+    private void VerticalSlopeCheck()
+    {
+
     }
 
 }
