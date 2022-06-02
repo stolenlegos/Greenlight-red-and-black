@@ -19,6 +19,8 @@ public class PlayerMovement : MonoBehaviour
     //player components
     [SerializeField] private Rigidbody2D playerRB;
     [SerializeField] private CapsuleCollider2D playerCollider;
+    [SerializeField] private PhysicsMaterial2D noFriction;
+    [SerializeField] private PhysicsMaterial2D fullFriction;
     //playerstates
     [SerializeField] private CharacterState playerState = CharacterState.IDLE;
     //masks
@@ -28,8 +30,8 @@ public class PlayerMovement : MonoBehaviour
     private float slideSpeed = 15f;
     private float diveSpeed = 8f;
     private float diveHeight = 3.5f;
-    private float jumpHeight = 10f;
-    private float fallSpeed = -3f;
+    private float jumpHeight = 5f;
+    private float fallSpeed = -5f;
     private float wallSlideSpeed = -2f;
     //movement directions
     Vector2 moveDirection = Vector2.zero;
@@ -47,6 +49,20 @@ public class PlayerMovement : MonoBehaviour
     private bool fallCheck = false;
     private bool falling = false;
     private bool reGround = false;
+    //player vectors
+    private Vector2 colliderSize;
+    //slope check variables
+    private float slopeDownAngle;
+    private float slopeDownAngleOld;
+    private float slopeSideAngle;
+    private Vector2 slopeNormalPerpendicular;
+    private bool isOnSlope;
+
+    private void Start()
+    {
+        colliderSize = playerCollider.size;
+    }
+
     void Update()
     {
         Debug.Log(playerState);
@@ -71,11 +87,15 @@ public class PlayerMovement : MonoBehaviour
                 slideSpeed = 15f;
                 diveSpeed = 8f;
                 playerStateChanged = false;
-                playerRB.velocity = new Vector2(moveDirection.x, moveDirection.y);
+                playerRB.velocity = new Vector2(moveDirection.x, fallSpeed);
                 if (jumpCheck){
                     playerStateChanged = true;
                     playerState = CharacterState.JUMPING;
                     StateObserver.StateChanged("JUMPING");
+                }
+                else if (!IsGrounded())
+                {
+                    playerRB.velocity = new Vector2(moveDirection.x, fallSpeed);
                 }
             }
             if (playerState == CharacterState.RUNNING){
@@ -84,7 +104,11 @@ public class PlayerMovement : MonoBehaviour
                 falling = false;
                 playerStateChanged = false;
                 playerRB.velocity = new Vector2(moveDirection.x * moveSpeed, moveDirection.y);
-                if (!IsGrounded() && !jumpCheck && !diveCheck && !slideCheck)
+                if (!IsGrounded() && !jumpCheck && !diveCheck && !slideCheck && runCheck && isOnSlope)
+                {
+                    playerRB.velocity = new Vector2(moveSpeed * slopeNormalPerpendicular.x * -moveDirection.x, moveSpeed * slopeNormalPerpendicular.y * -moveDirection.x);
+                }
+                else if (!IsGrounded() && !jumpCheck && !diveCheck && !slideCheck && !isOnSlope)
                 {
                     playerRB.velocity = new Vector2(moveDirection.x * (moveSpeed), fallSpeed);
                 }
@@ -122,23 +146,23 @@ public class PlayerMovement : MonoBehaviour
                 //Debug.Log("fallcheck" + fallCheck);
                 if (runCheck && !fallCheck){
                     playerRB.velocity = new Vector2(moveDirection.x * moveSpeed, playerRB.velocity.y);
-                    Debug.Log("Running1");
+                    //Debug.Log("Running1");
                 }
                 else if (!runCheck)
                 {
                     playerRB.velocity = new Vector2(moveDirection.x, playerRB.velocity.y);
-                    Debug.Log("Running2");
+                    //Debug.Log("Running2");
                 }
                 else if (fallCheck && !falling)
                 {
                     falling = true;
                     playerRB.velocity = new Vector2(moveDirection.x, wallSlideSpeed);
-                    Debug.Log("Running3");
+                    //Debug.Log("Running3");
                 }
                 else if (falling && fallCheck)
                 {
-                    playerRB.velocity = new Vector2(moveDirection.x * moveSpeed, playerRB.velocity.y); //fallSpeed);
-                    Debug.Log("Running4");
+                    playerRB.velocity = new Vector2(moveDirection.x * moveSpeed, playerRB.velocity.y);
+                    //Debug.Log("Running4");
                 }
             }
             if (playerState == CharacterState.VAULTING){
@@ -183,9 +207,8 @@ public class PlayerMovement : MonoBehaviour
                 playerRB.velocity = new Vector2(moveDirection.x * (diveSpeed), playerRB.velocity.y);
                 IsGrounded();
             }
-            //Debug.Log("onground" + IsGrounded());
-            //Debug.Log("onwall" + WallCheck());
             WallCheck();
+            SlopeCheck();
             //Debug.Log("jumpCheck" + jumpCheck);
         }
     }
@@ -212,11 +235,6 @@ public class PlayerMovement : MonoBehaviour
             playerStateChanged = true;
             playerState = CharacterState.JUMPING;
             StateObserver.StateChanged("JUMPING");
-        }
-    }
-    public void VaultAction(InputAction.CallbackContext ctx){
-        if (ctx.started && (playerState == CharacterState.IDLE || playerState == CharacterState.RUNNING)){
-            Debug.Log("Player - Vaulting");
         }
     }
     public void SlideOn(InputAction.CallbackContext ctx){
@@ -329,7 +347,15 @@ public class PlayerMovement : MonoBehaviour
         transform.localScale = localScale;
     }
     private bool IsGrounded(){
-        float extraHeightText = .02f;
+        float extraHeightText = .05f;
+        /*if (isOnSlope)
+        {
+            extraHeightText = .3f;
+        }
+        else
+        {
+            extraHeightText = .05f;
+        }*/
         if (playerState == CharacterState.DIVING)
         {
             RaycastHit2D divecastHit1 = Physics2D.Raycast(playerCollider.bounds.center, Vector2.down, playerCollider.bounds.extents.y + extraHeightText, ~playerLayerMask);
@@ -394,15 +420,59 @@ public class PlayerMovement : MonoBehaviour
 
     private void SlopeCheck()
     {
-
+        Vector2 checkPos = transform.position - new Vector3(0.0f, colliderSize.y / 2);
+        HorizontalSlopeCheck(checkPos);
+        VerticalSlopeCheck(checkPos);
     }
-    private void HorizontalSlopeCheck()
+    private void HorizontalSlopeCheck(Vector2 checkPos)
     {
+        float slopeCheckDistance = 0.5f;
+        RaycastHit2D slopeHitFront = Physics2D.Raycast(checkPos, transform.right, slopeCheckDistance, ~playerLayerMask);
+        RaycastHit2D slopeHitBack = Physics2D.Raycast(checkPos, -transform.right, slopeCheckDistance, ~playerLayerMask);
 
+        if (slopeHitFront)
+        {
+            isOnSlope = true;
+            slopeSideAngle = Vector2.Angle(slopeHitFront.normal, Vector2.up);
+        }
+        else if (slopeHitBack)
+        {
+            isOnSlope = true;
+            slopeSideAngle = Vector2.Angle(slopeHitBack.normal, Vector2.up);
+        }
+        else
+        {
+            slopeSideAngle = 0.0f;
+            isOnSlope = false;
+        }
     }
-    private void VerticalSlopeCheck()
+    private void VerticalSlopeCheck(Vector2 checkPos)
     {
+        float slopCheckDistance = 0.5f;
+        RaycastHit2D hit = Physics2D.Raycast(checkPos, Vector2.down, slopCheckDistance, ~playerLayerMask);
+        if (hit)
+        {
+            slopeNormalPerpendicular = Vector2.Perpendicular(hit.normal).normalized;
+            slopeDownAngle = Vector2.Angle(hit.normal, Vector2.up);
 
+            if(slopeDownAngle != slopeDownAngleOld)
+            {
+                isOnSlope = true;
+            }
+
+            slopeDownAngleOld = slopeDownAngle;
+
+            Debug.DrawRay(hit.point, slopeNormalPerpendicular, Color.black);
+            Debug.DrawRay(hit.point, hit.normal, Color.blue);
+        }
+        if(isOnSlope && playerState == CharacterState.IDLE)
+        {
+            playerRB.sharedMaterial = fullFriction;
+        }
+        else
+        {
+            playerRB.sharedMaterial = noFriction;
+        }
     }
 
 }
