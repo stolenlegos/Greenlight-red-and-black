@@ -347,7 +347,7 @@ public class PlayerMovement : MonoBehaviour
         transform.localScale = localScale;
     }
     private bool IsGrounded(){
-        float extraHeightText = .05f;
+        float extraHeightText = .1f;
         /*if (isOnSlope)
         {
             extraHeightText = .3f;
