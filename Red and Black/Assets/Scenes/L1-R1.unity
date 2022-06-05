@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.16388476, g: 0.19167483, b: 0.2166084, a: 1}
+  m_IndirectSpecularColor: {r: 0.16388458, g: 0.19167335, b: 0.2166083, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -542,14 +542,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4954220291421515628, guid: 857096dc22bd2c840a65f51022dab5a2,
+        type: 3}
+      propertyPath: m_Name
+      value: Bullet Rotation
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 857096dc22bd2c840a65f51022dab5a2, type: 3}
---- !u!4 &419381789 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4954220291407240988, guid: 857096dc22bd2c840a65f51022dab5a2,
-    type: 3}
-  m_PrefabInstance: {fileID: 419381788}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &487949584
 GameObject:
   m_ObjectHideFlags: 0
@@ -920,7 +919,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 055b91c2c64b27149a0f2ac37551a4ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 419381789}
+  player: {fileID: 4954220291814530304}
   smoothSpeed: 0.125
   offset: {x: 0, y: 1.2837964, z: -18}
   xBounds: {x: -3.52, y: 24.28}
@@ -954,6 +953,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletText: {fileID: 487949585}
+  cardText: {fileID: 63372539}
 --- !u!4 &1976758385
 Transform:
   m_ObjectHideFlags: 0
@@ -8296,6 +8296,12 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7768079538877125300}
   m_Mesh: {fileID: -3057383719919117499, guid: dbfa3879faaf5814c86b12470c8c61c4, type: 3}
+--- !u!4 &4954220291814530304 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4954220291407240988, guid: 857096dc22bd2c840a65f51022dab5a2,
+    type: 3}
+  m_PrefabInstance: {fileID: 419381788}
+  m_PrefabAsset: {fileID: 0}
 --- !u!23 &4970782135453867015
 MeshRenderer:
   m_ObjectHideFlags: 0

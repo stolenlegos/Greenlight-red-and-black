@@ -35,6 +35,7 @@ public class Deck : MonoBehaviour {
 
         if (addToDeck) {
             cardsPulled.Add(card);
+            UIObserver.PullCard(card.cardName);
             deckCurrent++;
         }
     }
