@@ -14,7 +14,11 @@ public class AIStateMachine : MonoBehaviour
 {
     //AI components
     [SerializeField] private Rigidbody2D aiRB;
-    [SerializeField] private BoxCollider2D aiCollider;
+    [SerializeField] private CapsuleCollider2D aiCollider;
+    [SerializeField] private GameObject visionCone;
+    private MeshCollider visionConeCollider;
+    [SerializeField] private PhysicsMaterial2D noFriction;
+    [SerializeField] private PhysicsMaterial2D fullFriction;
     //AIstates
     [SerializeField] private AIState aiState = AIState.PATROL;
     //masks
@@ -28,11 +32,20 @@ public class AIStateMachine : MonoBehaviour
     
     //ai bools
     private bool isFacingRight;
+    //ai collider size
+    private Vector2 aiColliderSize;
+    //slope check variables
+    private float slopeDownAngle;
+    private float slopeDownAngleOld;
+    private float slopeSideAngle;
+    private Vector2 slopeNormalPerpendicular;
+    private bool isOnSlope;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        aiColliderSize = aiCollider.size;
+        visionConeCollider = visionCone.GetComponent<MeshCollider>();
     }
 
     // Update is called once per frame
@@ -42,7 +55,22 @@ public class AIStateMachine : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        
+        if(aiState == AIState.PATROL)
+        {
+            //aiRB.velocity = ()
+        }
+        else if (aiState == AIState.CHASEANDSHOOT)
+        {
+
+        }
+        else if (aiState == AIState.SEARCH)
+        {
+
+        }
+        else if (aiState == AIState.DEAD)
+        {
+
+        }
     }
     private void FlipCharacter()
     {
@@ -97,5 +125,61 @@ public class AIStateMachine : MonoBehaviour
         }
         else { return false; }
 
+    }
+    private void SlopeCheck()
+    {
+        Vector2 checkPos = transform.position - new Vector3(0.0f, aiColliderSize.y / 2);
+        HorizontalSlopeCheck(checkPos);
+        VerticalSlopeCheck(checkPos);
+    }
+    private void HorizontalSlopeCheck(Vector2 checkPos)
+    {
+        float slopeCheckDistance = 0.5f;
+        RaycastHit2D slopeHitFront = Physics2D.Raycast(checkPos, transform.right, slopeCheckDistance, ~aiLayerMask);
+        RaycastHit2D slopeHitBack = Physics2D.Raycast(checkPos, -transform.right, slopeCheckDistance, ~aiLayerMask);
+
+        if (slopeHitFront)
+        {
+            isOnSlope = true;
+            slopeSideAngle = Vector2.Angle(slopeHitFront.normal, Vector2.up);
+        }
+        else if (slopeHitBack)
+        {
+            isOnSlope = true;
+            slopeSideAngle = Vector2.Angle(slopeHitBack.normal, Vector2.up);
+        }
+        else
+        {
+            slopeSideAngle = 0.0f;
+            isOnSlope = false;
+        }
+    }
+    private void VerticalSlopeCheck(Vector2 checkPos)
+    {
+        float slopCheckDistance = 0.5f;
+        RaycastHit2D hit = Physics2D.Raycast(checkPos, Vector2.down, slopCheckDistance, ~aiLayerMask);
+        if (hit)
+        {
+            slopeNormalPerpendicular = Vector2.Perpendicular(hit.normal).normalized;
+            slopeDownAngle = Vector2.Angle(hit.normal, Vector2.up);
+
+            if (slopeDownAngle != slopeDownAngleOld)
+            {
+                isOnSlope = true;
+            }
+
+            slopeDownAngleOld = slopeDownAngle;
+
+            Debug.DrawRay(hit.point, slopeNormalPerpendicular, Color.black);
+            Debug.DrawRay(hit.point, hit.normal, Color.blue);
+        }
+        if (isOnSlope && aiState == AIState.DEAD)
+        {
+            aiRB.sharedMaterial = fullFriction;
+        }
+        else
+        {
+            aiRB.sharedMaterial = noFriction;
+        }
     }
 }

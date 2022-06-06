@@ -348,14 +348,6 @@ public class PlayerMovement : MonoBehaviour
     }
     private bool IsGrounded(){
         float extraHeightText = .1f;
-        /*if (isOnSlope)
-        {
-            extraHeightText = .3f;
-        }
-        else
-        {
-            extraHeightText = .05f;
-        }*/
         if (playerState == CharacterState.DIVING)
         {
             RaycastHit2D divecastHit1 = Physics2D.Raycast(playerCollider.bounds.center, Vector2.down, playerCollider.bounds.extents.y + extraHeightText, ~playerLayerMask);
